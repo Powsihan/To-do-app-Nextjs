@@ -5,7 +5,7 @@ const addTask = async (req, res) => {
     const { name } = req.body;
     const existingTask = await Task.findOne({ name });
     if (existingTask) {
-      return res.status(404).json({ message: "Task already exists!" });
+      res.status(404).json({ message: "Task already exists!" });
     }
     await Task.create(req.body);
     res.status(200).json({ message: "Successfully created Task !" });

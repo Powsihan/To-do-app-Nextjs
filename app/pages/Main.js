@@ -6,23 +6,22 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import TaskForm from "../components/TaskForm";
+import toast, { Toaster } from "react-hot-toast";
+
 const Main = () => {
-  const [isTaskFormOpen, setIsTaskFormOpen] = useState(false);
-
-  const handleOpenTaskForm = () => {
-    setIsTaskFormOpen(true);
-  };
-
-  const handleCloseTaskForm = () => {
-    setIsTaskFormOpen(false);
-    fetchTaskDetails();
-  };
-
+  const [modalShow, setModalShow] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [modalType, setModalType] = useState("view");
+  const [update, setUpdate] = useState(false);
   const [taskDetails, setTaskDetails] = useState([]);
 
   useEffect(() => {
     fetchTaskDetails();
   }, []);
+
+  useEffect(() => {
+    (async () => await fetchTaskDetails())();
+  }, [update]);
 
   const fetchTaskDetails = () => {
     axios
@@ -42,31 +41,34 @@ const Main = () => {
         </h1>
         <div className="grid w-full place-items-end p-5">
           <button
-            class="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded"
-            onClick={handleOpenTaskForm}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded"
+            onClick={() => {
+              setModalType("Add");
+              setModalShow(true);
+            }}
           >
             Add Task
           </button>
         </div>
-        <div class="overflow-x-auto">
+        <div className="overflow-x-auto">
           <table
             className={`${styles["table-striped"]} min-w-full divide-y divide-gray-200 border border-gray-300`}
           >
             <thead>
               <tr>
-                <th class="px-6 py-3 text-center text-sm font-semibold uppercase tracking-wider">
+                <th className="px-6 py-3 text-center text-sm font-semibold uppercase tracking-wider">
                   No
                 </th>
-                <th class="px-6 py-3 text-center text-sm font-semibold  uppercase tracking-wider">
+                <th className="px-6 py-3 text-center text-sm font-semibold  uppercase tracking-wider">
                   TaskName
                 </th>
-                <th class="px-6 py-3 text-center text-sm font-semibold  uppercase tracking-wider">
+                <th className="px-6 py-3 text-center text-sm font-semibold  uppercase tracking-wider">
                   Status
                 </th>
-                <th class="px-6 py-3 text-center text-sm font-semibold  uppercase tracking-wider">
+                <th className="px-6 py-3 text-center text-sm font-semibold  uppercase tracking-wider">
                   Description
                 </th>
-                <th class="px-6 py-3 text-center text-sm font-semibold  uppercase tracking-wider">
+                <th className="px-6 py-3 text-center text-sm font-semibold  uppercase tracking-wider">
                   Action
                 </th>
               </tr>
@@ -74,10 +76,17 @@ const Main = () => {
             <tbody>
               {taskDetails.map((data, i) => (
                 <tr key={i}>
-                  <td class="px-6 py-4 whitespace-nowrap">{i + 1}</td>
-                  <td class="px-6 py-4 whitespace-nowrap">{data.name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{i + 1}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{data.name}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div
+                      onClick={() => {
+                        setModalType("State");
+                        let temp = { ...data };
+                        setSelectedTask(temp);
+
+                        setModalShow(true);
+                      }}
                       className={`${styles["status-box"]} ${
                         data.status ? styles["completed"] : styles["pending"]
                       }`}
@@ -86,12 +95,28 @@ const Main = () => {
                     </div>
                   </td>
 
-                  <td class="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     {data.description}
                   </td>
-                  <td class="px-6 py-4 whitespace-nowrap flex flex-column gap-2">
-                    <VisibilityIcon sx={{ color: "grey" }} />
-                    <EditIcon sx={{ color: "green" }} />
+                  <td className="px-6 py-4 whitespace-nowrap flex flex-column gap-2">
+                    <VisibilityIcon
+                      sx={{ color: "grey" }}
+                      onClick={() => {
+                        setModalType("View");
+                        let temp = { ...data };
+                        setSelectedTask(temp);
+                        setModalShow(true);
+                      }}
+                    />
+                    <EditIcon
+                      sx={{ color: "green" }}
+                      onClick={() => {
+                        setModalType("Edit");
+                        let temp = { ...data };
+                        setSelectedTask(temp);
+                        setModalShow(true);
+                      }}
+                    />
                     <DeleteIcon sx={{ color: "darkred" }} />
                   </td>
                 </tr>
@@ -100,7 +125,17 @@ const Main = () => {
           </table>
         </div>
       </div>
-      <TaskForm isOpen={isTaskFormOpen} onClose={handleCloseTaskForm} />
+      <TaskForm
+        show={modalShow}
+        type={modalType}
+        selectedTask={selectedTask}
+        update={() => setUpdate(!update)}
+        onHide={() => {
+          setModalShow(false);
+          setSelectedTask(null);
+        }}
+      />
+      <Toaster />
     </>
   );
 };
