@@ -50,7 +50,10 @@ const Main = () => {
             Add Task
           </button>
         </div>
-        <div className="overflow-x-auto" style={{ maxHeight: "500px", overflowY: "scroll" }}>
+        <div
+          className="overflow-x-auto"
+          style={{ maxHeight: "500px", overflowY: "scroll" }}
+        >
           <table
             className={`${styles["table-striped"]} min-w-full divide-y divide-gray-200 border border-gray-300`}
           >
@@ -78,7 +81,9 @@ const Main = () => {
                 <tr key={i}>
                   <td className="px-6 py-4 whitespace-nowrap">{i + 1}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{data.name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td
+                    className={`${styles["pointer-cursor"]} px-6 py-4 whitespace-nowrap`}
+                  >
                     <div
                       onClick={() => {
                         setModalType("State");
@@ -98,7 +103,9 @@ const Main = () => {
                   <td className="px-6 py-4 whitespace-nowrap max-w-96 overflow-hidden overflow-ellipsis">
                     {data.description}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap flex flex-column gap-2">
+                  <td
+                    className={`${styles["pointer-cursor"]} px-6 py-4 whitespace-nowrap flex flex-column gap-2`}
+                  >
                     <VisibilityIcon
                       sx={{ color: "grey" }}
                       onClick={() => {

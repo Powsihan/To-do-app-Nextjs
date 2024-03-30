@@ -4,6 +4,10 @@ import formHandler from "../utils/FormHandler";
 import { validateTask } from "../utils/validation";
 import toast, { Toaster } from "react-hot-toast";
 import { isEmpty } from "underscore";
+
+import PendingIcon from "@mui/icons-material/Pending";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+
 const TaskForm = (props) => {
   const { handleChange, handleSubmit, values, errors, initForm } = formHandler(
     stateTask,
@@ -20,7 +24,7 @@ const TaskForm = (props) => {
       !isEmpty(props.selectedTask)
     ) {
       initForm(props.selectedTask);
-    }else{
+    } else {
       initForm({});
     }
   }, [props.type, props.selectedTask]);
@@ -88,23 +92,40 @@ const TaskForm = (props) => {
         toast.error("Error editing task:", error);
       });
   };
-  
 
   return (
     <>
       {props.show && (
-        <div className="fixed z-10 inset-0 overflow-y-auto flex items-center justify-center" >
+        <div className="fixed z-10 inset-0 overflow-y-auto flex items-center justify-center">
           <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
           <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
             <form onSubmit={handleSubmit} className="p-6">
               <div>
-                <h3 className="text-3xl leading-6 font-semibold text-blue-900 mb-4 text-center">
-                  {props.type === "Add" && <div> Add Task Details</div>}
-                  {props.type === "View" && <div> View Task Details</div>}
-                  {props.type === "Edit" && <div> Edit Task Details</div>}
-                  {props.type === "State" && <div> Task Status Details</div>}
-                </h3>
-                <div className="mb-4">
+                <div className="flex flex-row mb-5">
+                  <div className="flex basis-5/6 text-3xl leading-6 font-semibold text-blue-900 items-center justify-start">
+                    {props.type === "Add" && <div> Add Task Details</div>}
+                    {props.type === "View" && <div> View Task Details</div>}
+                    {props.type === "Edit" && <div> Edit Task Details</div>}
+                    {props.type === "State" && <div> Task Status Details</div>}
+                  </div>
+                  <div className="flex basis-1/6 items-center justify-end ">
+                    {(props.type === "State" || props.type==="View") && (
+                      values.status ? (
+                        <CheckCircleIcon
+                          sx={{ fontSize: "40px", color: "green" }}
+                        />
+                      ) : (
+                        <PendingIcon
+                          sx={{ fontSize: "40px", color: "orange" }}
+                        />
+                      )
+                    )}
+                  </div>
+                </div>
+
+                <hr />
+
+                <div className="mb-4 mt-4">
                   <label
                     htmlFor="taskName"
                     className="block text-sm font-medium text-gray-700"
@@ -117,7 +138,7 @@ const TaskForm = (props) => {
                     id="name"
                     value={values.name || ""}
                     onChange={handleChange}
-                    className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md px-3 py-2"
+                    className="mt-1 border-2 border-e-4 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md px-3 py-2"
                     placeholder="Enter task name"
                     disabled={props.type === "View" || props.type === "State"}
                   />
@@ -138,7 +159,7 @@ const TaskForm = (props) => {
                     value={values.description || ""}
                     onChange={handleChange}
                     rows="3"
-                    className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md px-3 py-2"
+                    className="mt-1 border-2 border-e-4 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md px-3 py-2"
                     placeholder="Enter description"
                     disabled={props.type === "View" || props.type === "State"}
                   ></textarea>
@@ -147,6 +168,7 @@ const TaskForm = (props) => {
                   )}
                 </div>
               </div>
+              <hr className="mb-4" />
               {props.type === "State" ? (
                 <div className="flex gap-2">
                   <button
@@ -166,7 +188,7 @@ const TaskForm = (props) => {
                   <button
                     onClick={onClose}
                     type="button"
-                    className="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    className="inline-flex justify-center rounded-md border border-gray-100 shadow-sm px-4 py-2 bg-gray-200 text-base font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >
                     Cancel
                   </button>
@@ -177,27 +199,29 @@ const TaskForm = (props) => {
                     <button
                       type="submit"
                       className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mr-2"
-                      onClick={addTask} >
+                      onClick={addTask}
+                    >
                       Add Task
                     </button>
                   )}
-                   {props.type == "Edit" && (
+                  {props.type == "Edit" && (
                     <button
                       type="submit"
                       className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mr-2"
-                      onClick={editTask}>
+                      onClick={editTask}
+                    >
                       Update Task
                     </button>
                   )}
                   <button
-                     onClick={() => {
-                      if (!formSubmitted) { 
-                          props.onHide();
-                          initForm({});
+                    onClick={() => {
+                      if (!formSubmitted) {
+                        props.onHide();
+                        initForm({});
                       }
-                  }}
+                    }}
                     type="button"
-                    className="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    className="inline-flex justify-center rounded-md border border-gray-100 shadow-sm px-4 py-2 bg-gray-200 text-base font-medium text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >
                     Cancel
                   </button>
