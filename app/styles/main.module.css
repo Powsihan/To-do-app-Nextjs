@@ -25,3 +25,9 @@
     color: rgb(139, 3, 3);
     background: #ff9c9c !important;
 }
+.thead-fixed{
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 1;
+}

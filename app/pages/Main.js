@@ -50,11 +50,11 @@ const Main = () => {
             Add Task
           </button>
         </div>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto" style={{ maxHeight: "500px", overflowY: "scroll" }}>
           <table
             className={`${styles["table-striped"]} min-w-full divide-y divide-gray-200 border border-gray-300`}
           >
-            <thead>
+            <thead className={styles["thead-fixed"]}>
               <tr>
                 <th className="px-6 py-3 text-center text-sm font-semibold uppercase tracking-wider">
                   No
@@ -95,7 +95,7 @@ const Main = () => {
                     </div>
                   </td>
 
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4 whitespace-nowrap max-w-96 overflow-hidden overflow-ellipsis">
                     {data.description}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap flex flex-column gap-2">
