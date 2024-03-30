@@ -7,6 +7,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import TaskForm from "../components/TaskForm";
 import toast, { Toaster } from "react-hot-toast";
+import ConfirmationModal from "../components/Confirmationmodal";
 
 const Main = () => {
   const [modalShow, setModalShow] = useState(false);
@@ -14,6 +15,8 @@ const Main = () => {
   const [modalType, setModalType] = useState("view");
   const [update, setUpdate] = useState(false);
   const [taskDetails, setTaskDetails] = useState([]);
+  const [deleteConfirmationModal, setDeleteConfirmationModal] = useState(false);
+  
 
   useEffect(() => {
     fetchTaskDetails();
@@ -32,6 +35,32 @@ const Main = () => {
       .catch((error) => {
         console.error("Error fetching task details:", error);
       });
+  };
+
+  const deleteTask = (taskId) => {
+    axios
+      .delete(`http://localhost:3000/api/tasks/${taskId}`)
+      .then((response) => {
+        if (response.status === 200) {
+          toast.success(response.data.message);
+          fetchTaskDetails();
+          closeDeleteConfirmationModal();
+        } else {
+          toast.error(response.data.message);
+        }
+      })
+      .catch((error) => {
+        toast.error("Error editing task:", error);
+      });
+  };
+
+  const openDeleteConfirmationModal = (taskId) => {
+    setSelectedTask(taskId);
+    setDeleteConfirmationModal(true);
+  };
+
+  const closeDeleteConfirmationModal = () => {
+    setDeleteConfirmationModal(false);
   };
   return (
     <>
@@ -124,7 +153,7 @@ const Main = () => {
                         setModalShow(true);
                       }}
                     />
-                    <DeleteIcon sx={{ color: "darkred" }} />
+                    <DeleteIcon sx={{ color: "darkred" }} onClick={() => openDeleteConfirmationModal(data._id)}/>
                   </td>
                 </tr>
               ))}
@@ -141,6 +170,13 @@ const Main = () => {
           setModalShow(false);
           setSelectedTask(null);
         }}
+      />
+      <ConfirmationModal
+        show={deleteConfirmationModal}
+        message="Are you sure you want to delete this task?"
+        heading="Confirmation Delete"
+        onConfirm={() => deleteTask(selectedTask)}
+        onCancel={closeDeleteConfirmationModal}
       />
       <Toaster />
     </>

@@ -53,7 +53,7 @@ const TaskForm = (props) => {
     }
   };
 
-  function statusUpdate(status) {
+  const statusUpdate = (status) => {
     values.status = status;
     console.log(props.selectedTask);
     console.log(props.selectedTask._id);
@@ -74,7 +74,7 @@ const TaskForm = (props) => {
       .finally(() => {
         props.onHide();
       });
-  }
+  };
 
   const editTask = () => {
     axios
@@ -109,8 +109,8 @@ const TaskForm = (props) => {
                     {props.type === "State" && <div> Task Status Details</div>}
                   </div>
                   <div className="flex basis-1/6 items-center justify-end ">
-                    {(props.type === "State" || props.type==="View") && (
-                      values.status ? (
+                    {(props.type === "State" || props.type === "View") &&
+                      (values.status ? (
                         <CheckCircleIcon
                           sx={{ fontSize: "40px", color: "green" }}
                         />
@@ -118,8 +118,7 @@ const TaskForm = (props) => {
                         <PendingIcon
                           sx={{ fontSize: "40px", color: "orange" }}
                         />
-                      )
-                    )}
+                      ))}
                   </div>
                 </div>
 
