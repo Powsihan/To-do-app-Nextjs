@@ -77,6 +77,15 @@ const TaskForm = (props) => {
   };
 
   const editTask = () => {
+    if (
+      values.name === props.selectedTask.name &&
+      values.description === props.selectedTask.description
+    ) {
+      toast.success("No updated to data !");
+      onClose();
+      return;
+    }
+
     axios
       .put(`http://localhost:3000/api/tasks/${props.selectedTask._id}`, values)
       .then((response) => {
@@ -174,6 +183,7 @@ const TaskForm = (props) => {
                     type="button"
                     className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50"
                     onClick={() => statusUpdate(false)}
+                    disabled={values.status===false}
                   >
                     Pending
                   </button>
@@ -181,6 +191,7 @@ const TaskForm = (props) => {
                     type="button"
                     className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
                     onClick={() => statusUpdate(true)}
+                    disabled={values.status===true}
                   >
                     Completed
                   </button>
